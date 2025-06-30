@@ -36,25 +36,22 @@ public with sharing class OpportunityHandler {
             }
         }
         if(!oppsToUpdate.isEmpty()){
-            Map<Id, Map<Date, String>> ownerDateTargetMap = new Map<Id, Map<Date, String>>();
-            List<Target__c> targets = [SELECT Id, AccountExecutive__c, Date__c FROM Target__c WHERE AccountExecutive__c IN : oppsOwners AND Date__c IN : oppsClosedDates];
-            if(!targets.isEmpty()){
-                for(Target__c target : targets){
-                    If(!ownerDateTargetMap.containsKey(target.AccountExecutive__c)){
-                        ownerDateTargetMap.put(target.AccountExecutive__c, new Map<Date, String>());
-                    }
-                    ownerDateTargetMap.get(target.AccountExecutive__c).put(target.Date__c, target.Id);
+            Map<Id, Map<Date, Id>> ownerDateTargetMap = new Map<Id, Map<Date, Id>>();
+            for(Target__c target : [SELECT Id, AccountExecutive__c, Date__c FROM Target__c WHERE AccountExecutive__c IN : oppsOwners AND Date__c IN : oppsClosedDates]){
+                if(!ownerDateTargetMap.containsKey(target.AccountExecutive__c)){
+                    ownerDateTargetMap.put(target.AccountExecutive__c, new Map<Date, Id>());
                 }
+                ownerDateTargetMap.get(target.AccountExecutive__c).put(target.Date__c, target.Id);
             }
             for(Opportunity opp : oppsToUpdate){
-                if(ownerDateTargetMap.containsKey(opp.OwnerId) && ownerDateTargetMap.get(opp.OwnerId).containsKey(opp.CloseDate.toStartOfMonth())){
-                    opp.Target__c = ownerDateTargetMap.get(opp.OwnerId).get(opp.CloseDate.toStartOfMonth());
-                }
-                else{
-                    opp.Target__c = null;
-                } 
+                opp.Target__c = ownerDateTargetMap.get(opp.OwnerId)?.get(opp.CloseDate.toStartOfMonth());
+                // if(ownerDateTargetMap.containsKey(opp.OwnerId) && ownerDateTargetMap.get(opp.OwnerId).containsKey(opp.CloseDate.toStartOfMonth())){
+                //     opp.Target__c = ownerDateTargetMap.get(opp.OwnerId).get(opp.CloseDate.toStartOfMonth());
+                // }
+                // else{
+                //     opp.Target__c = null;
+                // } 
             }
         }
     }
-
 }

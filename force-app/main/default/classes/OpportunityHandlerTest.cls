@@ -10,7 +10,7 @@ public class OpportunityHandlerTest {
     }
 
     @isTest
-    static void testInsertOpportunity_AssignsTarget() {
+    static void testInsertOpportunity_AssignTarget() {
         User testUser = [SELECT Id FROM User WHERE IsActive = true LIMIT 1];
         Opportunity opp = new Opportunity(
             Name = 'Test Opportunity',
@@ -29,7 +29,7 @@ public class OpportunityHandlerTest {
     }
 
     @isTest
-    static void testUpdateOpportunity_AssignsNewTarget() {
+    static void testUpdateOpportunity_AssignNewTarget() {
         User testUser = [SELECT Id FROM User WHERE IsActive = true LIMIT 1];
         Opportunity opp = new Opportunity(
             Name = 'Test Opportunity',
